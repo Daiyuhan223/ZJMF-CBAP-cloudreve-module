@@ -231,9 +231,6 @@ class CloudreveApi
 
         curl_close($ch);
 
-        // 调试日志：记录每次请求的 URL/状态码/响应
-        $this->apiLog($method, $url, $httpCode, $error, $response);
-
         if ($error) {
             throw new \Exception("cURL Error: {$error}");
         }
@@ -255,24 +252,5 @@ class CloudreveApi
         }
 
         return $body;
-    }
-
-    /**
-     * 写 Cloudreve API 请求日志到系统根目录 cloudreve_debug.txt
-     */
-    private function apiLog($method, $url, $httpCode, $curlError, $response)
-    {
-        try {
-            if (defined('IDCSMART_ROOT')) {
-                $file = IDCSMART_ROOT . '/cloudreve_debug.txt';
-            } else {
-                $file = __DIR__ . '/cloudreve_debug.txt';
-            }
-            $line = date('Y-m-d H:i:s') . ' [api] ' . $method . ' ' . $url . ' => ' . $httpCode
-                . ($curlError ? ' curl:' . $curlError : '')
-                . ' body:' . substr((string)$response, 0, 300) . PHP_EOL;
-            file_put_contents($file, $line, FILE_APPEND);
-        } catch (\Exception $e) {
-        }
     }
 }

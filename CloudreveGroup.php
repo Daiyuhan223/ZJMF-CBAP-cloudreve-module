@@ -198,20 +198,8 @@ class CloudreveGroup
                 'host_id'    => [$hostId],
             ]);
 
-            // 调试日志
-            $this->debugLog('self_defined_field', [
-                'product_id' => $productId,
-                'host_id'    => $hostId,
-                'data'       => $data,
-            ]);
-
             $fields = $data['self_defined_field'] ?? [];
             $values = $data['self_defined_field_value'][$hostId] ?? [];
-
-            $this->debugLog('self_defined_field_fields', [
-                'fields' => $fields,
-                'values' => $values,
-            ]);
 
             foreach ($fields as $field) {
                 $fieldId = (int)($field['id'] ?? 0);
@@ -227,27 +215,9 @@ class CloudreveGroup
                 }
             }
         } catch (\Exception $e) {
-            $this->debugLog('self_defined_field_error', $e->getMessage());
         }
 
         return '';
-    }
-
-    /**
-     * 写调试日志到系统根目录 cloudreve_debug.txt
-     */
-    private function debugLog($key, $data)
-    {
-        try {
-            if (defined('IDCSMART_ROOT')) {
-                $file = IDCSMART_ROOT . '/cloudreve_debug.txt';
-            } else {
-                $file = __DIR__ . '/cloudreve_debug.txt';
-            }
-            $line = date('Y-m-d H:i:s') . ' [' . $key . '] ' . json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) . PHP_EOL;
-            file_put_contents($file, $line, FILE_APPEND);
-        } catch (\Exception $e) {
-        }
     }
 
     /**
@@ -287,12 +257,6 @@ class CloudreveGroup
             $hostId = isset($host['id']) ? (int)$host['id'] : 0;
             $email = $this->resolveEmail($host);
             if (empty($email)) {
-                $this->debugLog('createAccount_email_empty', [
-                    'host_id'    => $hostId,
-                    'product_id' => $product['id'] ?? 0,
-                    'host_email_table' => $this->getHostEmail($hostId),
-                    'host_custom_fields_raw' => $host['custom_fields'] ?? '(not set)',
-                ]);
                 return ['status' => 400, 'msg' => lang_plugins('cloudreve_group.email_required')];
             }
 

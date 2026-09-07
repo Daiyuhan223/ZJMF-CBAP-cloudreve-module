@@ -1,6 +1,6 @@
-# Cloudreve 用户组管理模块（cloudreve_group）
+# Cloudreve 用户组管理模块（ZJMF-CBAP-cloudreve-module）
 
-智简魔方 V10（IDCsmart）的 server 类型模块插件。用户在魔方购买不同等级的云盘套餐后，自动调用 **Cloudreve v4** 管理 API 切换用户组；到期未续费自动降级。
+智简魔方业务系统 V10（ZJMF-CBAP）的 server 类型模块插件。用户在魔方购买不同等级的云盘套餐后，自动调用 **Cloudreve v4** 管理 API 切换用户组；到期未续费自动降级。
 
 ## 功能特性
 
@@ -145,3 +145,6 @@ public/plugins/server/cloudreve_group/
 ## License
 
 仅供学习交流。对接智简魔方与 Cloudreve 请遵守双方相关协议与版权。
+
+
+2026.9.7 Daiyuhan223 谨上

@@ -1,0 +1,164 @@
+<div class="cloudreve-group-map" style="padding:15px;">
+    <h3>Cloudreve 用户组映射</h3>
+    <p>商品ID：{$product.id}。该商品开通/续费时将按此映射切换用户 Cloudreve 用户组，等级权重越大优先级越高（同用户多套餐时取最高）。</p>
+    <p style="color:#f56c6c;">用户组ID 填 Cloudreve 用户组的<b>数字ID</b>（不是界面显示的字母ID，如 3DhE）。可在 Cloudreve 数据库 user_group 表的 id 列查看，或用用户组列表接口获取。</p>
+
+    <table style="width:100%;border-collapse:collapse;margin:10px 0;">
+        <thead>
+            <tr>
+                <th style="padding:8px 12px;border:1px solid #ddd;background:#f5f7fa;">商品ID</th>
+                <th style="padding:8px 12px;border:1px solid #ddd;background:#f5f7fa;">用户组ID</th>
+                <th style="padding:8px 12px;border:1px solid #ddd;background:#f5f7fa;">等级权重</th>
+                <th style="padding:8px 12px;border:1px solid #ddd;background:#f5f7fa;">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {volist name="group_map" id="v"}
+            <tr id="row-{$v.id}">
+                <td style="padding:8px 12px;border:1px solid #ddd;">{$v.product_id}</td>
+                <td style="padding:8px 12px;border:1px solid #ddd;">{$v.group_id}</td>
+                <td style="padding:8px 12px;border:1px solid #ddd;">{$v.group_level}</td>
+                <td style="padding:8px 12px;border:1px solid #ddd;">
+                    <a href="javascript:void(0)" style="color:#f56c6c;" onclick="delMap({$v.id})">删除</a>
+                </td>
+            </tr>
+            {/volist}
+            {empty name="group_map"}
+            <tr><td colspan="4" style="padding:8px 12px;border:1px solid #ddd;color:#909399;">当前商品未配置映射</td></tr>
+            {/empty}
+        </tbody>
+    </table>
+
+    <div style="background:#f9fafc;padding:15px;border-radius:4px;">
+        <h4>新增 / 修改映射</h4>
+        <form id="mapForm">
+            <input type="hidden" name="product_id" value="{$product.id}">
+            <input type="number" name="group_id" placeholder="用户组ID" style="width:120px;" required>
+            <input type="number" name="group_level" placeholder="等级权重" value="10" style="width:120px;" required>
+            <button type="button" onclick="saveMap()">保存</button>
+        </form>
+    </div>
+
+    <hr style="margin:24px 0;border:none;border-top:1px solid #eee;">
+
+    <h3>周期价格配置</h3>
+    <p>该商品在购买页展示的计费周期与价格，前台购买、续费均按此计算。</p>
+
+    <table style="width:100%;border-collapse:collapse;margin:10px 0;">
+        <thead>
+            <tr>
+                <th style="padding:8px 12px;border:1px solid #ddd;background:#f5f7fa;">周期名称</th>
+                <th style="padding:8px 12px;border:1px solid #ddd;background:#f5f7fa;">时长</th>
+                <th style="padding:8px 12px;border:1px solid #ddd;background:#f5f7fa;">价格（元）</th>
+                <th style="padding:8px 12px;border:1px solid #ddd;background:#f5f7fa;">操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {volist name="cycles" id="v"}
+            <tr id="cycle-row-{$v.id}">
+                <td style="padding:8px 12px;border:1px solid #ddd;">{$v.name}</td>
+                <td style="padding:8px 12px;border:1px solid #ddd;">{$v.cycle_time} {$v.cycle_unit}</td>
+                <td style="padding:8px 12px;border:1px solid #ddd;">{$v.amount|number_format=2}</td>
+                <td style="padding:8px 12px;border:1px solid #ddd;">
+                    <a href="javascript:void(0)" style="color:#f56c6c;" onclick="delCycle({$v.id})">删除</a>
+                </td>
+            </tr>
+            {/volist}
+            {empty name="cycles"}
+            <tr><td colspan="4" style="padding:8px 12px;border:1px solid #ddd;color:#909399;">尚未配置周期，前台将兜底显示商品起售价（月付）</td></tr>
+            {/empty}
+        </tbody>
+    </table>
+
+    <div style="background:#f9fafc;padding:15px;border-radius:4px;">
+        <h4>添加周期</h4>
+        <form id="cycleForm">
+            <input type="hidden" name="product_id" value="{$product.id}">
+            <input type="text" name="name" placeholder="周期名称（如：月付）" required>
+            <input type="number" name="num" placeholder="时长" value="1" style="width:70px;" required>
+            <select name="unit">
+                <option value="month">月</option>
+                <option value="day">天</option>
+                <option value="year">年</option>
+                <option value="hour">小时</option>
+            </select>
+            <input type="number" step="0.01" name="price" placeholder="价格" style="width:90px;" required>
+            <button type="button" onclick="addCycle()">添加</button>
+        </form>
+    </div>
+</div>
+
+<script>
+// 使用主题提供的 Axios（自带后台 baseURL 与 admin token 鉴权），勿用裸 fetch
+var CR_BASE = 'cloudreve_group';
+
+function saveMap() {
+    var form = document.getElementById('mapForm');
+    var pid = form.product_id.value;
+    var params = {
+        product_id: pid,
+        group_id: form.group_id.value,
+        group_level: form.group_level.value
+    };
+
+    Axios.post('/' + CR_BASE + '/product/' + pid + '/group_map', params)
+    .then(function (res) {
+        res = res.data;
+        alert(res.msg || (res.status === 200 ? '保存成功' : '保存失败'));
+        if (res.status === 200) { setTimeout(function () { location.reload(); }, 500); }
+    })
+    .catch(function (err) { alert('请求失败：' + (err.data && err.data.msg ? err.data.msg : err.message)); });
+}
+
+function delMap(id) {
+    if (!confirm('确认删除该映射？')) return;
+    var pid = document.getElementById('mapForm').product_id.value;
+
+    Axios.delete('/' + CR_BASE + '/product/' + pid + '/group_map/' + id)
+    .then(function (res) {
+        res = res.data;
+        alert(res.msg || '删除成功');
+        if (res.status === 200) {
+            var row = document.getElementById('row-' + id);
+            if (row) { row.remove(); }
+        }
+    })
+    .catch(function (err) { alert('请求失败：' + (err.data && err.data.msg ? err.data.msg : err.message)); });
+}
+
+function addCycle() {
+    var form = document.getElementById('cycleForm');
+    var pid = form.product_id.value;
+    var params = {
+        product_id: pid,
+        name: form.name.value,
+        num: form.num.value,
+        unit: form.unit.value,
+        price: form.price.value
+    };
+
+    Axios.post('/' + CR_BASE + '/product/' + pid + '/custom_cycle', params)
+    .then(function (res) {
+        res = res.data;
+        alert(res.msg || (res.status === 200 ? '添加成功' : '添加失败'));
+        if (res.status === 200) { setTimeout(function () { location.reload(); }, 500); }
+    })
+    .catch(function (err) { alert('请求失败：' + (err.data && err.data.msg ? err.data.msg : err.message)); });
+}
+
+function delCycle(id) {
+    if (!confirm('确认删除该周期？')) return;
+    var pid = document.getElementById('cycleForm').product_id.value;
+
+    Axios.delete('/' + CR_BASE + '/product/' + pid + '/custom_cycle/' + id)
+    .then(function (res) {
+        res = res.data;
+        alert(res.msg || '删除成功');
+        if (res.status === 200) {
+            var row = document.getElementById('cycle-row-' + id);
+            if (row) { row.remove(); }
+        }
+    })
+    .catch(function (err) { alert('请求失败：' + (err.data && err.data.msg ? err.data.msg : err.message)); });
+}
+</script>

@@ -1,0 +1,11 @@
+<div class="cloudreve-admin">
+    <p>Cloudreve 邮箱：{$cloudreve_email|default='-'}</p>
+    {if $group_info}
+    <p>当前用户组ID：{$group_info.group_id}（等级权重：{$group_info.group_level}）</p>
+    <p>到期时间：
+        {if $group_info.expire_date > 0}{$group_info.expire_date|date='Y-m-d H:i:s',###}{else}永久/未设置{/if}
+    </p>
+    {else}
+    <p>暂无套餐记录</p>
+    {/if}
+</div>

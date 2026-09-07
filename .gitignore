@@ -1,0 +1,18 @@
+# 运行时调试日志
+cloudreve_debug.txt
+
+# idcsmart_common 参考源码（官方版权，勿提交）
+common/
+
+# 一次性建表脚本（用后即删，勿提交）
+install.php
+
+# PHP / IDE
+*.log
+.idea/
+.vscode/
+*.swp
+
+# 魔方系统运行缓存
+runtime/
+data/runtime/

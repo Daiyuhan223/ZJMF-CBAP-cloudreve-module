@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'display_name'         => 'Cloudreve Group Management',
+    'version'              => '1.0.0',
+    'connect_success'      => 'Connection successful',
+    'connect_failed'       => 'Connection failed',
+    'email_required'       => 'Cloudreve email is required',
+    'group_config_missing' => 'Target group ID or level not configured',
+    'api_error'            => 'Cloudreve API error',
+    'open_success'         => 'Account created successfully',
+    'suspend_success'      => 'Account suspended successfully',
+    'unsuspend_success'    => 'Account unsuspended successfully',
+    'terminate_success'    => 'Account terminated successfully',
+    'renew_success'        => 'Renewal successful',
+    'login_success'        => 'Login link generated',
+    'login_user_not_found' => 'Cloudreve user not found',
+    'login_generate_failed'=> 'Failed to generate login link',
+    'cron_task_completed'  => 'Cron task completed',
+    'cron_task_error'      => 'Cron task failed',
+    'cron_user_downgraded' => 'User {email} downgraded to group {group_id}',
+    'cron_no_config'       => 'No module server configuration found',
+    'cron_no_expired'      => 'No expired subscription records',
+    'cron_processed'       => 'Processed {count} expired records',
+];

@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'display_name'         => 'Cloudreve 用户组管理',
+    'version'              => '1.0.0',
+    'connect_success'      => '连接成功',
+    'connect_failed'       => '连接失败',
+    'email_required'       => '未提供 Cloudreve 邮箱',
+    'group_config_missing' => '未配置目标用户组或等级',
+    'api_error'            => 'Cloudreve API 错误',
+    'open_success'         => '开通成功',
+    'suspend_success'      => '暂停成功',
+    'unsuspend_success'    => '解除暂停成功',
+    'terminate_success'    => '删除成功',
+    'renew_success'        => '续费成功',
+    'login_success'        => '登录链接生成成功',
+    'login_user_not_found' => 'Cloudreve 用户不存在',
+    'login_generate_failed'=> '生成登录链接失败',
+    'cron_task_completed'  => '定时任务执行完成',
+    'cron_task_error'      => '定时任务执行失败',
+    'cron_user_downgraded' => '用户 {email} 已降级为用户组 {group_id}',
+    'cron_no_config'       => '未找到模块接口配置',
+    'cron_no_expired'      => '无过期套餐记录',
+    'cron_processed'       => '处理了 {count} 条过期记录',
+];

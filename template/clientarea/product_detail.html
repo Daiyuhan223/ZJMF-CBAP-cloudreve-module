@@ -1,0 +1,45 @@
+<div class="template">
+  <div class="cloudreve-detail" style="padding:16px;max-width:720px;">
+    <div style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:20px;">
+      <p style="margin:6px 0;">产品ID：{$host.id}</p>
+      <p style="margin:6px 0;">Cloudreve 邮箱：{$cloudreve_email|default='-'}</p>
+      <p style="margin:6px 0;">状态：{$host.status}</p>
+      <p style="margin:6px 0;">到期时间：
+        {if is_numeric($host.nextduedate) && $host.nextduedate > 0}{$host.nextduedate|date='Y-m-d H:i:s',###}{else}{$host.nextduedate|default='-'}{/if}
+      </p>
+      {if $group_info}
+      <p style="margin:6px 0;">当前用户组ID：{$group_info.group_id}（等级权重：{$group_info.group_level}）</p>
+      <p style="margin:6px 0;">套餐到期：
+        {if $group_info.expire_date > 0}{$group_info.expire_date|date='Y-m-d H:i:s',###}{else}未设置{/if}
+      </p>
+      {/if}
+      <div style="margin-top:20px;">
+        <button type="button" style="padding:8px 24px;background:#2563eb;color:#fff;border:none;border-radius:4px;cursor:pointer;" onclick="cloudreveLogin({$host.id})">登录 Cloudreve</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function cloudreveLogin(hostId) {
+  if (typeof Axios === 'undefined') {
+    alert('页面组件未加载，请刷新后重试');
+    return;
+  }
+  Axios.post('/cloudreve_group/host/' + hostId + '/custom/provision', { func: 'login' })
+  .then(function (res) {
+    res = res.data;
+    if (res.status === 200 && res.data && res.data.login_url) {
+      window.open(res.data.login_url, '_blank');
+    } else {
+      alert(res.msg || '获取登录链接失败');
+    }
+  })
+  .catch(function (err) { alert('请求失败：' + (err.data && err.data.msg ? err.data.msg : err.message)); });
+}
+(function () {
+  var m = document.getElementById("mainLoading");
+  if (m) { m.style.display = "none"; }
+  var t = document.getElementsByClassName("template")[0];
+  if (t) { t.style.display = "block"; }
+})();
+</script>
